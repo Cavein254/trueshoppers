@@ -4,7 +4,7 @@ pipeline {
     environment {
         VENV = "${WORKSPACE}/venv"
         DOCKER_IMAGE = 'cave254/trueshoppers'
-        BUILD_TAG = "${env.BUILD_NUMBER}"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_auth') // Replace with your Jenkins credentials ID
     }
 
@@ -53,10 +53,10 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 sh '''
-                docker build -t ${DOCKER_IMAGE}:${BUILD_TAG} .
+                docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
                 '''
             }
-        
+
         }
         stage('Docker Login') {
             steps {
@@ -70,7 +70,7 @@ pipeline {
             steps {
                 echo 'Pushing Docker image to Docker Hub...'
                 sh '''
-                docker push ${DOCKER_IMAGE}:${BUILD_TAG}
+                docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
                 '''
             }
         }
