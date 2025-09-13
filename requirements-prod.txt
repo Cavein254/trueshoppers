@@ -1,0 +1,4 @@
+-r requirements.txt  # include base requirements
+
+# Production tools
+gunicorn>=21.0

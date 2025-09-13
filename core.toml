@@ -1,0 +1,30 @@
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+exclude = '''
+/(
+    migrations
+  | venv
+  | env
+  | static
+  | media
+  | staticfiles
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = ["migrations", "venv", "env"]
+
+[tool.ruff]
+line-length = 88
+exclude = ["migrations", "venv", "env"]
+select = [
+  "E", "F",   # pyflakes + pycodestyle errors
+  "I",        # import sorting
+  "DJ",       # Django-specific rules
+]
+ignore = [
+  "E501",     # line length (Black handles it)
+]
