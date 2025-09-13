@@ -88,6 +88,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATIC_URL = "static/"
 
@@ -122,5 +123,3 @@ SPECTACULAR_SETTINGS = {
     # Optional: add authentication schemes
     "SECURITY": [{"BearerAuth": []}],
 }
-
-STATIC_URL = "/static/"
