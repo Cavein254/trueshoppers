@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         VENV = "${WORKSPACE}/venv"
+        DOCKER_IMAGE = 'cave254/trueshoppers'
+        BUILD_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
