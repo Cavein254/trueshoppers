@@ -25,7 +25,7 @@ pipeline {
                 // activate the virtual environment and install dependencies
                 sh '''
                 . ${VENV}/bin/activate
-                pip install -r requirements.txt
+                pip install -r requirements-dev.txt
                 '''
             }
         }
@@ -34,7 +34,7 @@ pipeline {
                 echo 'collecting static files and preparing build'
                 sh '''
                 . ${VENV}/bin/activate
-                python manage.py collectstatic --noinput
+                python manage.py collectstatic --noinput --settings=core.settings.dev
                 python manage.py migrate
                 '''
             }
@@ -44,7 +44,7 @@ pipeline {
                 echo 'running tests'
                 sh '''
                 source ${VENV}/bin/activate
-                python manage.py test
+                python manage.py test --settings=core.settings.dev
                 '''
             }
         }
