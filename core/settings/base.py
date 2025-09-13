@@ -122,3 +122,5 @@ SPECTACULAR_SETTINGS = {
     # Optional: add authentication schemes
     "SECURITY": [{"BearerAuth": []}],
 }
+
+STATIC_URL = "/static/"

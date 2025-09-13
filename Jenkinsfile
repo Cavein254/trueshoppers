@@ -44,7 +44,7 @@ pipeline {
                 echo 'running tests'
                 sh '''
                 source ${VENV}/bin/activate
-                python manage.py test --settings=core.settings.dev
+                python manage.py test --settings=core.settings.test
                 '''
             }
         }
