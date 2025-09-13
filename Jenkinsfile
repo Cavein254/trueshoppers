@@ -14,7 +14,6 @@ pipeline {
                echo "setting up python env"
                 // install python3-venv if you don't have it
                 sh 'python3 -m pip install --upgrade pip'
-                sh 'python3 -m pip install virtualenv'
 
                 // create a virtual environment if it doesn't exist
                 sh '''
@@ -25,7 +24,7 @@ pipeline {
 
                 // activate the virtual environment and install dependencies
                 sh '''
-                source ${VENV}/bin/activate
+                . ${VENV}/bin/activate
                 pip install -r requirements.txt
                 '''
             }
@@ -34,7 +33,7 @@ pipeline {
             steps {
                 echo 'collecting static files and preparing build'
                 sh '''
-                source ${VENV}/bin/activate
+                . ${VENV}/bin/activate
                 python manage.py collectstatic --noinput
                 python manage.py migrate
                 '''
