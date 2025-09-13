@@ -2,98 +2,69 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_USER = credentials('docker_user')   // Jenkins credential ID for Docker username
-        DOCKER_PASS = credentials('docker_pass')   // Jenkins credential ID for Docker password
+        VENV = "${WORKSPACE}/venv"
     }
 
     stages {
-        stage('Dev') {
-            when {
-                allOf {
-                    anyOf {
-                        branch 'develop'
-                    }
-                    anyOf {
-                        triggeredBy 'SCMTrigger'   // handles push
-                        triggeredBy 'PullRequestSCMTriggerCause' // handles PR
-                    }
-                }
-            }
-            agent {
-                docker {
-                    image 'python:3.12-slim'
-                    args '-u root'
-                }
-            }
-            environment {
-                DJANGO_SETTINGS_MODULE = 'core.settings.dev'
-            }
+        stage('setup') {
             steps {
+               echo "setting up python env"
+                // install python3-venv if you don't have it
+                sh 'python3 -m pip install --upgrade pip'
+                sh 'python3 -m pip install virtualenv'
+
+                // create a virtual environment if it doesn't exist
                 sh '''
-                  python -m venv venv
-                  . venv/bin/activate
-                  pip install --upgrade pip
-                  pip install -r requirements.txt
-                  python manage.py migrate
-                  python manage.py test
+                if [ ! -d "$VENV" ]; then
+                    python3 -m venv venv
+                fi
+                '''
+
+                // activate the virtual environment and install dependencies
+                sh '''
+                source ${VENV}/bin/activate
+                pip install -r requirements.txt
                 '''
             }
         }
-
+        stage('Build') {
+            steps {
+                echo 'collecting static files and preparing build'
+                sh '''
+                source ${VENV}/bin/activate
+                python manage.py collectstatic --noinput
+                python manage.py migrate
+                '''
+            }
+        }
         stage('Test') {
-            when {
-                allOf {
-                    anyOf {
-                        branch 'main'
-                        branch 'develop'
-                    }
-                    anyOf {
-                        triggeredBy 'SCMTrigger'
-                        triggeredBy 'PullRequestSCMTriggerCause'
-                    }
-                }
-            }
-            agent {
-                docker {
-                    image 'python:3.12-slim'
-                    args '-u root'
-                }
-            }
-            environment {
-                DJANGO_SETTINGS_MODULE = 'core.settings.test'
-            }
             steps {
+                echo 'running tests'
                 sh '''
-                  python -m venv venv
-                  . venv/bin/activate
-                  pip install --upgrade pip
-                  pip install -r requirements.txt
-                  python manage.py migrate
-                  python manage.py test
+                source ${VENV}/bin/activate
+                python manage.py test
                 '''
             }
         }
-
         stage('Deploy') {
-            when {
-                allOf {
-                    branch 'main'
-                    triggeredBy 'SCMTrigger'   // only pushes, not PRs
-                }
-            }
-            agent {
-                docker {
-                    image 'docker:latest'
-                    args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
             steps {
-                sh '''
-                  echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                  docker build -t myapp:${GIT_COMMIT} .
-                  docker push myapp:${GIT_COMMIT}
-                '''
+                echo 'deploying application'
+                // Add your deployment steps here
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up...'
+            sh 'deactivate || true'
+            sh 'rm -rf ${VENV}'
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs.'
         }
     }
 }
