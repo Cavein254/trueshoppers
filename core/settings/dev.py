@@ -1,7 +1,8 @@
-from .base import *
+from .base import *  # noqa: F403,F401
+
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
     "default": {
@@ -15,7 +16,6 @@ DATABASES = {
 }
 
 
-
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
@@ -23,5 +23,5 @@ CACHES = {
     }
 }
 
-CELERY_BROKER_URL = 'amqp://user:pass@rabbitmq:5672//'
+CELERY_BROKER_URL = "amqp://user:pass@rabbitmq:5672//"
 CELERY_RESULT_BACKEND = "rpc://"

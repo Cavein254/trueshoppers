@@ -2,3 +2,4 @@
 
 # Production tools
 gunicorn>=21.0
+dj-database-url
