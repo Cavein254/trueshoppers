@@ -57,7 +57,9 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 sh '''
-                docker build -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
+                docker build \
+                --build-arg DJANGO_SETTINGS_MODULE=core.settings.prod \
+                -f Dockerfile.prod -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
                 '''
             }
 

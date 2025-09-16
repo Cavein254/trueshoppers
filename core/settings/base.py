@@ -101,17 +101,6 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": env(
-            "REDIS_CACHE_URL", default="redis://redis:6379/1"
-        ),  # service name = redis
-    }
-}
-
-CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="amqp://user:pass@rabbitmq:5672//")
-CELERY_RESULT_BACKEND = "rpc://"
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "My Project API",

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -15,6 +16,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+INSTALLED_APPS = INSTALLED_APPS + ["authentication"]  # noqa: F405
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -26,6 +29,19 @@ DATABASES = {
     }
 }
 
+REST_FRAMEWORK = {
+    **REST_FRAMEWORK,  # noqa: F405
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
 
 CACHES = {
     "default": {
