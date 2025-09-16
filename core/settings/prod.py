@@ -12,6 +12,11 @@ env.read_env(os.path.join(BASE_DIR, ".env.prod"))
 
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://192.168.122.200",
+    "http://192.168.122.200:30080",
+    "https://yourdomain.com",
+]
 
 INSTALLED_APPS = INSTALLED_APPS + ["authentication"]  # noqa: F405
 
