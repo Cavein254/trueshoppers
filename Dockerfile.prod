@@ -36,8 +36,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /install /usr/local
 
 # Copy entrypoint and make executable
-COPY ./entrypoint.sh .
-RUN chmod +x ./entrypoint.sh
+COPY ./entrypoint.prod.sh .
+RUN chmod +x ./entrypoint.prod.sh
 
 # Copy Django project
 COPY . .

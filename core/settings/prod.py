@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-import dj_database_url
 import environ
 
 from .base import *  # noqa: F403,F401
@@ -9,19 +8,20 @@ from .base import *  # noqa: F403,F401
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
-env.read_env(os.path.join(BASE_DIR, ".env"))
+env.read_env(os.path.join(BASE_DIR, ".env.prod"))
 
 DEBUG = False
-ALLOWED_HOSTS = [""]
+ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=env(
-            "DATABASE_URL",
-        ),
-        conn_max_age=600,
-        ssl_require=env.bool("DB_SSL_REQUIRED", default=False),
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("DB_NAME", default="dev_db"),
+        "USER": env("DB_USER", default="devuser"),
+        "PASSWORD": env("DB_PASSWORD", default="devpass"),
+        "HOST": env("DB_HOST", default="localhost"),
+        "PORT": env("DB_PORT", default="5433"),
+    }
 }
 
 

@@ -12,6 +12,7 @@ django-cors-headers
 Pillow>=10.0  # For image handling
 django-charid-field # For short unique IDs
 cuid # For collision-resistant IDs
+whitenoise
 
 # Database
 psycopg2-binary>=2.9  # For PostgreSQL
