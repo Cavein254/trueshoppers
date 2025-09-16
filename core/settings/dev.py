@@ -5,7 +5,7 @@ import environ
 
 from .base import *  # noqa: F403,F401
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Initialise environment variables
 env = environ.Env()
@@ -25,6 +25,7 @@ DATABASES = {
         "PORT": env("DB_PORT", default="5433"),
     }
 }
+
 
 CACHES = {
     "default": {
