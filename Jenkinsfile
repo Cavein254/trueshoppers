@@ -40,7 +40,7 @@ pipeline {
                 sh '''
                 . ${VENV}/bin/activate
                 python manage.py collectstatic --noinput --settings=core.settings.dev
-                python manage.py migrate
+                python manage.py migrate --settings=core.settings.dev
                 '''
             }
         }
