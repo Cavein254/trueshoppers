@@ -1,4 +1,15 @@
+import os
+from pathlib import Path
+
+import environ
+
 from .base import *  # noqa: F403,F401
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Initialise environment variables
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR, ".env.dev"))
 
 DEBUG = True
 
@@ -7,14 +18,13 @@ ALLOWED_HOSTS = ["*"]
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "dev_db",
-        "USER": "devuser",
-        "PASSWORD": "devpass",
-        "HOST": "localhost",
-        "PORT": "5433",
+        "NAME": env("DB_NAME", "dev_db"),
+        "USER": env("DB_USER", "devuser"),
+        "PASSWORD": env("DB_PASSWORD", "devpass"),
+        "HOST": env("DB_HOST", "localhost"),
+        "PORT": env("DB_PORT", "5433"),
     }
 }
-
 
 CACHES = {
     "default": {
