@@ -6,11 +6,11 @@ pipeline {
         DOCKER_IMAGE = 'cave254/trueshoppers'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_auth') // Replace with your Jenkins credentials ID
-        DB_NAME=mydatabase
-        DB_USER=myuser
-        DB_PASSWORD=mysecretpassword
-        DB_HOST=192.168.122.200
-        DB_PORT=32345
+        DB_NAME='mydatabase'
+        DB_USER='myuser'
+        DB_PASSWORD='mysecretpassword'
+        DB_HOST='192.168.122.200'
+        DB_PORT='32345'
     }
 
     stages {
