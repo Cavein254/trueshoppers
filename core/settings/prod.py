@@ -13,6 +13,8 @@ env.read_env(os.path.join(BASE_DIR, ".env.prod"))
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
+INSTALLED_APPS = INSTALLED_APPS + ["authentication"]  # noqa: F405
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
