@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-echo "Starting entrypoint script..."
+echo "xx Starting entrypoint script..."
 
 cd /app
 
@@ -13,8 +13,4 @@ python manage.py migrate --settings=core.settings.prod
 
 echo "Entrypoint finished, starting app..."
 
-# Run Gunicorn
-exec gunicorn core.wsgi:application \
-    --bind 0.0.0.0:8000 \
-    --workers 4 \
-    --log-level info
+exec "$@"
