@@ -12,7 +12,7 @@ from PIL import Image
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField(max_length=255, unique=True, blank=False)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     parent = models.ForeignKey(
         "self", null=True, blank=True, related_name="children", on_delete=models.CASCADE
     )
@@ -30,6 +30,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    category = models.ManyToManyField(Category, related_name="products", blank=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     sku = models.CharField(max_length=100, unique=True, blank=True, null=True)

@@ -4,7 +4,8 @@ from .models import Category, Product, ProductImage
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
-    thumbnail_url = serializers.SerializerMethodField(read_only=True)
+    thumbnail_url = serializers.SerializerMethodField()
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
 
     class Meta:
         model = ProductImage
@@ -16,8 +17,31 @@ class ProductImageSerializer(serializers.ModelSerializer):
         return None
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+    products = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ["id", "name", "slug", "parent", "children", "products"]
+        read_only_fields = ["slug"]
+
+    def get_children(self, obj):
+        return CategorySerializer(obj.children.all(), many=True).data
+
+    def get_products(self, obj):
+        products = Product.objects.filter(category=obj)
+        return ProductSerializer(products, many=True).data
+
+
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
+    category = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="slug"
+    )
+    category_ids = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Category.objects.all(), write_only=True, source="category"
+    )
 
     class Meta:
         model = Product
@@ -30,21 +54,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "stock_quantity",
             "images",
             "description",
+            "category",
+            "category_ids",
         ]
         read_only_fields = ["slug", "sku"]
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    children = serializers.SerializerMethodField()
-    products = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Category
-        fields = ["id", "name", "slug", "parent", "children", "products"]
-
-    def get_children(self, obj):
-        return CategorySerializer(obj.children.all(), many=True).data
-
-    def get_products(self, obj):
-        products = Product.objects.filter(category=obj)
-        return ProductSerializer(products, many=True).data
