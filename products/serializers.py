@@ -36,9 +36,11 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
-    categories = CategorySerializer(many=True, read_only=True)
+    category = serializers.SlugRelatedField(
+        many=True, read_only=True, slug_field="slug"
+    )
     category_ids = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Category.objects.all(), write_only=True, source="categories"
+        many=True, queryset=Category.objects.all(), write_only=True, source="category"
     )
 
     class Meta:
@@ -52,5 +54,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "stock_quantity",
             "images",
             "description",
+            "category",
+            "category_ids",
         ]
         read_only_fields = ["slug", "sku"]
