@@ -31,7 +31,7 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     sku = models.CharField(max_length=100, unique=True, blank=True, null=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(
@@ -47,14 +47,16 @@ class Product(models.Model):
             while Product.objects.filter(slug=slug).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
-            self.slug
+            self.slug = slug
         if not self.sku:
             base = self.name[:3].upper()
             unique = str(uuid.uuid4().int)[:6]
             self.sku = f"{base}-{unique}"
 
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.product.name} -  {self.name}"
+        return f"{self.name} -  {self.sku}"
 
 
 class ProductImage(models.Model):

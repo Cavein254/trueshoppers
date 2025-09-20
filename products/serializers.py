@@ -4,11 +4,11 @@ from .models import Category, Product, ProductImage
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
-    thumbnail_url = serializers.SerializerMethodField()
+    thumbnail_url = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ProductImage
-        fields = ["id", "image", "alt_text", "is_main", "thumbnail_url"]
+        fields = ["id", "product", "image", "alt_text", "is_main", "thumbnail_url"]
 
     def get_thumbnail_url(self, obj):
         if obj.thumbnail:
@@ -21,7 +21,17 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ["id", "name", "slug", "sku", "price", "stock_quantity", "images"]
+        fields = [
+            "id",
+            "name",
+            "slug",
+            "sku",
+            "price",
+            "stock_quantity",
+            "images",
+            "description",
+        ]
+        read_only_fields = ["slug", "sku"]
 
 
 class CategorySerializer(serializers.ModelSerializer):
