@@ -16,7 +16,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-INSTALLED_APPS = INSTALLED_APPS + ["authentication"]  # noqa: F405
+INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products"]  # noqa: F405
 
 DATABASES = {
     "default": {

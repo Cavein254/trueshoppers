@@ -18,7 +18,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://yourdomain.com",
 ]
 
-INSTALLED_APPS = INSTALLED_APPS + ["authentication"]  # noqa: F405
+INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products"]  # noqa: F405
 
 DATABASES = {
     "default": {

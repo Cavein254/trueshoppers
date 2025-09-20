@@ -27,3 +27,5 @@ media/
 static_root/
 staticfiles/
 .env*
+uploads/
+CACHE/
