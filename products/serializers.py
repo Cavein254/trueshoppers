@@ -3,8 +3,16 @@ from rest_framework import serializers
 from .models import Category, Product, ProductImage
 
 
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = "__all__"
+
+
 class ProductImageSerializer(serializers.ModelSerializer):
-    thumbnail_url = serializers.SerializerMethodField(read_only=True)
+    thumbnail_url = serializers.SerializerMethodField()
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
+
 
     class Meta:
         model = ProductImage
@@ -14,7 +22,6 @@ class ProductImageSerializer(serializers.ModelSerializer):
         if obj.thumbnail:
             return obj.thumbnail.url
         return None
-
 
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
