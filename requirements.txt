@@ -25,3 +25,6 @@ djangorestframework-simplejwt
 
 #image processing
 django-imagekit
+
+#routing
+drf-nested-routers
