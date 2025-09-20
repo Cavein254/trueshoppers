@@ -1,6 +1,6 @@
 -r requirements.txt  # include base requirements
 
-# Development & Testing
+# Development
 pytest>=8.0
 coverage>=7.0
 flake8>=7.0
@@ -9,3 +9,8 @@ isort>=5.13
 pre_commit
 
 djangorestframework-simplejwt
+
+
+#Testing
+pytest
+pytest-django
