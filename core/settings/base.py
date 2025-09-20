@@ -106,6 +106,9 @@ REST_FRAMEWORK = {
 }
 
 
+MEDIA_ROOT = BASE_DIR / "upload"
+MEDIA_URL = "/upload/"
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "My Project API",
     "DESCRIPTION": "API documentation for My Project",
