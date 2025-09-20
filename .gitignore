@@ -25,3 +25,7 @@ Thumbs.db
 # Media and Static files (if managed outside version control)
 media/
 static_root/
+staticfiles/
+.env*
+uploads/
+CACHE/

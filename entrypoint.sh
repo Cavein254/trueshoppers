@@ -2,6 +2,8 @@
 
 set -e
 
+cd /app
+
 echo "Starting entrypoint script..."
 
 echo "Collecting static files..."

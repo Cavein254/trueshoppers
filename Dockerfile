@@ -10,15 +10,18 @@ ENV PYTHONUNBUFFERED 1
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libpq-dev gcc curl netcat-traditional \
+    libpq-dev gcc curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip
 RUN pip install --upgrade pip
 
 # Install Python dependencies
+# Copy base requirement file
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Copy development requirement file
+COPY requirements-dev.txt .
+RUN pip install -r requirements-dev.txt
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
