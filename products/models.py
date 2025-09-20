@@ -1,3 +1,4 @@
+import uuid
 from io import BytesIO
 
 from django.core.files.base import ContentFile
@@ -31,11 +32,26 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
-    sku = models.CharField(max_length=100, unique=True)
+    sku = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    description = models.TextField(blank=True)
     price = models.DecimalField(
         max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
     )
     stock_quantity = models.PositiveBigIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.name)
+            slug = base_slug
+            counter = 1
+            while Product.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug
+        if not self.sku:
+            base = self.name[:3].upper()
+            unique = str(uuid.uuid4().int)[:6]
+            self.sku = f"{base}-{unique}"
 
     def __str__(self):
         return f"{self.product.name} -  {self.name}"
