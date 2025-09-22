@@ -48,18 +48,21 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running pytest...'
-                sh '''
-                    set +e  # allow capturing exit code instead of failing immediately
-                    pytest -v
-                    EXIT_CODE=$?
+                script {
+                    sh '''
+                        set +e
+                        . ${VENV}/bin/activate  # activate venv here
+                        pytest -v
+                        EXIT_CODE=$?
 
-                    if [ $EXIT_CODE -eq 5 ]; then
-                        echo "No tests were collected. Treating as success."
-                        exit 0
-                    else
-                        exit $EXIT_CODE
-                    fi
-                '''
+                        if [ $EXIT_CODE -eq 5 ]; then
+                            echo "No tests were collected. Treating as success."
+                            exit 0
+                        else
+                            exit $EXIT_CODE
+                        fi
+                    '''
+                }
             }
             post {
                 success {
