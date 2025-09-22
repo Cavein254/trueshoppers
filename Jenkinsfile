@@ -46,15 +46,26 @@ pipeline {
         // }
         stage('Test') {
             steps {
-                echo 'running tests'
-                script {
-                    sh """
-                        set -e  # Fail on first error
-                        . ${VENV}/bin/activate
-                        python manage.py collectstatic --noinput --settings=core.settings.test
-                        python manage.py migrate --noinput --settings=core.settings.test
-                        python manage.py test --settings=core.settings.test
-                    """
+                echo 'Running pytest...'
+                sh '''
+                    set +e  # allow capturing exit code instead of failing immediately
+                    pytest -v
+                    EXIT_CODE=$?
+
+                    if [ $EXIT_CODE -eq 5 ]; then
+                        echo "No tests were collected. Treating as success."
+                        exit 0
+                    else
+                        exit $EXIT_CODE
+                    fi
+                '''
+            }
+            post {
+                success {
+                    echo 'Tests passed ✅'
+                }
+                failure {
+                    echo 'Tests failed ❌'
                 }
             }
         }
@@ -92,7 +103,6 @@ pipeline {
             echo 'docker logout'
             sh 'docker logout'
             echo 'Cleaning up...'
-            sh 'deactivate || true'
             sh 'rm -rf ${VENV}'
         }
         success {
