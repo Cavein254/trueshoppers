@@ -10,7 +10,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ["public_id", "email", "first_name", "last_name", "date_joined"]
 
 
-class UserRegistrationSerializer(serializers.Serializer):
+class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
 
     class Meta:
@@ -20,7 +20,10 @@ class UserRegistrationSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         password = validated_data.pop("password")
-        user = CustomUser.objects.create_user(password=password, **validated_data)
+        email = validated_data.pop("email")
+        user = CustomUser.objects.create_user(
+            email=email, password=password, **validated_data
+        )
         return user
 
 
