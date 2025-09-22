@@ -14,9 +14,8 @@ urlpatterns = [
         "api/v1/",
         include(
             [
-                path("auth/", include("authentication.urls")),
-                path("shop/", include("products.urls")),
                 path("auth/", include("users.urls")),
+                path("shop/", include("products.urls")),
                 # Schema generation
                 path("docs/schema/", SpectacularAPIView.as_view(), name="schema"),
                 # Swagger UI
@@ -31,6 +30,8 @@ urlpatterns = [
                     SpectacularRedocView.as_view(url_name="schema"),
                     name="redoc",
                 ),
+                # dj-rest-auth to avoid conflicts
+                path("auth/", include("authentication.urls")),
             ]
         ),
     ),

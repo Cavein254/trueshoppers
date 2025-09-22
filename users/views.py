@@ -1,11 +1,22 @@
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import CustomUser
-from .serializers import UserLoginSerializer, UserRegistrationSerializer
+from .serializers import (
+    CustomUserSerializer,
+    UserLoginSerializer,
+    UserRegistrationSerializer,
+)
+
+
+class MeView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = CustomUserSerializer(request.user)
+        return Response(serializer.data)
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -14,11 +25,12 @@ class UserRegistrationView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 
-class UserLoginView(APIView):
+class UserLoginView(generics.GenericAPIView):
+    serializer_class = UserLoginSerializer
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = UserLoginSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
 

@@ -4,6 +4,12 @@ from rest_framework import serializers
 from .models import CustomUser
 
 
+class CustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ["public_id", "email", "first_name", "last_name", "date_joined"]
+
+
 class UserRegistrationSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, min_length=6)
 
@@ -29,4 +35,4 @@ class UserLoginSerializer(serializers.Serializer):
         # if not user.is_active:
         #     raise serializers.ValidationError("User account is disabled")
         data["user"] = user
-        return user
+        return data
