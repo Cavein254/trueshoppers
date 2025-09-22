@@ -52,15 +52,7 @@ pipeline {
                     sh '''
                         set +e
                         . ${VENV}/bin/activate  # activate venv here
-                        pytest -v
-                        EXIT_CODE=$?
-
-                        if [ $EXIT_CODE -eq 5 ]; then
-                            echo "No tests were collected. Treating as success."
-                            exit 0
-                        else
-                            exit $EXIT_CODE
-                        fi
+                        pytest --ds=$DJANGO_SETTINGS_MODULE --disable-warnings -v
                     '''
                 }
             }
