@@ -1,10 +1,12 @@
 from charidfield import CharIDField
+from cuid import cuid
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
 )
 from django.db import models
+from django.utils import timezone
 
 
 class CustomUserManager(BaseUserManager):
@@ -33,16 +35,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     public_id = CharIDField(
         primary_key=False,  # 👈 keep your default PK separate
         prefix="usr_",
-        max_length=12,
+        max_length=30,
         unique=True,
         editable=False,
+        default=cuid,
     )
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    date_joined = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(default=timezone.now)
 
     objects = CustomUserManager()
 

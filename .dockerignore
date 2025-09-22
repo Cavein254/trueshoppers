@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache
+*.coverage
+.coverage.*
+.pytest_cache/
+*.log
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+*.egg-info/
+.eggs/
+
+# Django
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/   # if collected locally (you’ll likely collect inside container)
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Tests / Coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.cache/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.pot
+
+# Node / Frontend (if present)
+node_modules/
+npm-debug.log
+yarn-error.log

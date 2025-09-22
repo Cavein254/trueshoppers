@@ -3,7 +3,7 @@ from pathlib import Path
 
 import environ
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Initialise environment variables
 env = environ.Env()
@@ -25,11 +25,13 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "drf_spectacular",
+    "drf_spectacular_sidecar",
     "users",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -88,8 +90,12 @@ USE_I18N = True
 
 USE_TZ = True
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATIC_URL = "static/"
+
+# Enable GZip + caching
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -100,25 +106,18 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": env(
-            "REDIS_CACHE_URL", default="redis://redis:6379/1"
-        ),  # service name = redis
-    }
-}
 
-CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="amqp://user:pass@rabbitmq:5672//")
-CELERY_RESULT_BACKEND = "rpc://"
+MEDIA_ROOT = BASE_DIR / "uploads"
+MEDIA_URL = "/uploads/"
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "My Project API",
-    "DESCRIPTION": "API documentation for My Project",
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",  # Use bundled Swagger UI
+    "REDOC_DIST": "SIDECAR",  # Use bundled Redoc UI
+    "TITLE": "Trushoppers API",
+    "DESCRIPTION": "API documentation for Trueshoppers",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,  # Don't expose schema as JSON by default
-    "SWAGGER_UI_DIST": "SIDECAR",  # Use bundled Swagger UI
-    "REDOC_DIST": "SIDECAR",  # Use bundled Redoc UI
     # Optional: add authentication schemes
     "SECURITY": [{"BearerAuth": []}],
 }

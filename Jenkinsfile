@@ -4,8 +4,13 @@ pipeline {
     environment {
         VENV = "${WORKSPACE}/venv"
         DOCKER_IMAGE = 'cave254/trueshoppers'
-        BUILD_TAG = "${env.BUILD_NUMBER}"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKERHUB_CREDENTIALS = credentials('dockerhub_auth') // Replace with your Jenkins credentials ID
+        DB_NAME='mydatabase'
+        DB_USER='myuser'
+        DB_PASSWORD='mysecretpassword'
+        DB_HOST='192.168.122.200'
+        DB_PORT='32345'
     }
 
     stages {
@@ -14,7 +19,6 @@ pipeline {
                echo "setting up python env"
                 // install python3-venv if you don't have it
                 sh 'python3 -m pip install --upgrade pip'
-                sh 'python3 -m pip install virtualenv'
 
                 // create a virtual environment if it doesn't exist
                 sh '''
@@ -25,38 +29,52 @@ pipeline {
 
                 // activate the virtual environment and install dependencies
                 sh '''
-                source ${VENV}/bin/activate
-                pip install -r requirements.txt
+                . ${VENV}/bin/activate
+                pip install -r requirements-test.txt
+                pip install pytest-django pytest
                 '''
             }
         }
-        stage('Build') {
-            steps {
-                echo 'collecting static files and preparing build'
-                sh '''
-                source ${VENV}/bin/activate
-                python manage.py collectstatic --noinput
-                python manage.py migrate
-                '''
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         echo 'collecting static files and preparing build'
+        //         sh '''
+        //         . ${VENV}/bin/activate
+        //         python manage.py collectstatic --noinput --settings=core.settings.dev
+        //         python manage.py migrate --settings=core.settings.dev
+        //         '''
+        //     }
+        // }
         stage('Test') {
             steps {
-                echo 'running tests'
-                sh '''
-                source ${VENV}/bin/activate
-                python manage.py test
-                '''
+                echo 'Running pytest...'
+                script {
+                    sh '''
+                        set +e
+                        . ${VENV}/bin/activate  # activate venv here
+                        pytest --disable-warnings -v
+                    '''
+                }
+            }
+            post {
+                success {
+                    echo 'Tests passed ✅'
+                }
+                failure {
+                    echo 'Tests failed ❌'
+                }
             }
         }
         stage('Docker Build') {
             steps {
                 echo 'Building Docker image...'
                 sh '''
-                docker build -t ${DOCKER_IMAGE}:${BUILD_TAG} .
+                docker build \
+                --build-arg DJANGO_SETTINGS_MODULE=core.settings.prod \
+                -f Dockerfile.prod -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
                 '''
             }
-        
+
         }
         stage('Docker Login') {
             steps {
@@ -70,7 +88,7 @@ pipeline {
             steps {
                 echo 'Pushing Docker image to Docker Hub...'
                 sh '''
-                docker push ${DOCKER_IMAGE}:${BUILD_TAG}
+                docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
                 '''
             }
         }
@@ -81,7 +99,6 @@ pipeline {
             echo 'docker logout'
             sh 'docker logout'
             echo 'Cleaning up...'
-            sh 'deactivate || true'
             sh 'rm -rf ${VENV}'
         }
         success {

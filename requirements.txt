@@ -12,8 +12,20 @@ django-cors-headers
 Pillow>=10.0  # For image handling
 django-charid-field # For short unique IDs
 cuid # For collision-resistant IDs
+whitenoise
+
 # Database
 psycopg2-binary>=2.9  # For PostgreSQL
 
 # API Docs
-drf-spectacular>=0.27  # Swagger/OpenAPI alternative
+drf-spectacular>=0.28  # Swagger/OpenAPI alternative
+drf-spectacular[sidecar]
+
+#authentication
+djangorestframework-simplejwt
+
+#image processing
+django-imagekit
+
+#routing
+drf-nested-routers

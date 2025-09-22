@@ -1,0 +1,56 @@
+# ---------- Builder stage ----------
+FROM python:3.12-bullseye as builder
+
+WORKDIR /app
+
+# System dependencies required for building (e.g. psycopg2, Pillow, etc.)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential gcc libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Install dependencies (only copy requirement files first for caching)
+COPY requirements.txt .
+COPY requirements-prod.txt .
+RUN pip install --prefix=/install -r requirements-prod.txt
+
+
+# ---------- Final stage ----------
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Set envs
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/install/bin:$PATH"
+
+# Install runtime dependencies (minimal set)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy only installed packages from builder
+COPY --from=builder /install /usr/local
+
+# Copy entrypoint and make executable
+COPY ./entrypoint.prod.sh .
+RUN chmod +x ./entrypoint.prod.sh
+
+# Copy Django project
+COPY . .
+
+# collect static
+RUN python manage.py collectstatic --noinput --settings=core.settings.prod
+
+# Entrypoint
+ENTRYPOINT ["/app/entrypoint.prod.sh"]
+
+# Expose port
+EXPOSE 8000
+
+# Use gunicorn for production
+ENV DJANGO_SETTINGS_MODULE=core.settings.prod
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4"]
