@@ -30,6 +30,8 @@ RUN chmod +x ./entrypoint.sh
 # Copy Django project
 COPY . .
 
+# collect static
+RUN python manage.py collectstatic --noinput --settings=core.settings.dev
 
 # run entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]

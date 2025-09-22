@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "drf_spectacular",
+    "drf_spectacular_sidecar",
     "users",
 ]
 
@@ -110,12 +111,13 @@ MEDIA_ROOT = BASE_DIR / "uploads"
 MEDIA_URL = "/uploads/"
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "My Project API",
-    "DESCRIPTION": "API documentation for My Project",
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",  # Use bundled Swagger UI
+    "REDOC_DIST": "SIDECAR",  # Use bundled Redoc UI
+    "TITLE": "Trushoppers API",
+    "DESCRIPTION": "API documentation for Trueshoppers",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,  # Don't expose schema as JSON by default
-    "SWAGGER_UI_DIST": "SIDECAR",  # Use bundled Swagger UI
-    "REDOC_DIST": "SIDECAR",  # Use bundled Redoc UI
     # Optional: add authentication schemes
     "SECURITY": [{"BearerAuth": []}],
 }
