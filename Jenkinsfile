@@ -31,6 +31,7 @@ pipeline {
                 sh '''
                 . ${VENV}/bin/activate
                 pip install -r requirements-test.txt
+                pip install pytest-django pytest
                 '''
             }
         }
