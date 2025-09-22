@@ -14,6 +14,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products"]  # noqa: F405
+
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
