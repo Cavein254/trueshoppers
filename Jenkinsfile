@@ -52,7 +52,7 @@ pipeline {
                     sh '''
                         set +e
                         . ${VENV}/bin/activate  # activate venv here
-                        pytest --ds=$DJANGO_SETTINGS_MODULE --disable-warnings -v
+                        pytest --disable-warnings -v
                     '''
                 }
             }
