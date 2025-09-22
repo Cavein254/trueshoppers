@@ -30,27 +30,32 @@ pipeline {
                 // activate the virtual environment and install dependencies
                 sh '''
                 . ${VENV}/bin/activate
-                pip install -r requirements-dev.txt
+                pip install -r requirements-test.txt
                 '''
             }
         }
-        stage('Build') {
-            steps {
-                echo 'collecting static files and preparing build'
-                sh '''
-                . ${VENV}/bin/activate
-                python manage.py collectstatic --noinput --settings=core.settings.dev
-                python manage.py migrate --settings=core.settings.dev
-                '''
-            }
-        }
+        // stage('Build') {
+        //     steps {
+        //         echo 'collecting static files and preparing build'
+        //         sh '''
+        //         . ${VENV}/bin/activate
+        //         python manage.py collectstatic --noinput --settings=core.settings.dev
+        //         python manage.py migrate --settings=core.settings.dev
+        //         '''
+        //     }
+        // }
         stage('Test') {
             steps {
                 echo 'running tests'
-                sh '''
-                . ${VENV}/bin/activate
-                python manage.py test --settings=core.settings.dev
-                '''
+                script {
+                    sh """
+                        set -e  # Fail on first error
+                        . ${VENV}/bin/activate
+                        python manage.py collectstatic --noinput --settings=core.settings.test
+                        python manage.py migrate --noinput --settings=core.settings.test
+                        python manage.py test --settings=core.settings.test
+                    """
+                }
             }
         }
         stage('Docker Build') {
