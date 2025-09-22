@@ -37,10 +37,11 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -v || EXIT_CODE=$?
-          if [ $EXIT_CODE -eq 5 ]; then
-            echo "No tests were collected. Treating as success."
-            exit 0
-          else
-            exit $EXIT_CODE
-          fi
+            EXIT_CODE=0
+            pytest -v || EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 5 ]; then
+              echo "No tests were collected. Treating as success."
+              exit 0
+            else
+              exit $EXIT_CODE
+            fi
