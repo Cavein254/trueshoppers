@@ -13,9 +13,10 @@ from .serializers import (
 
 class MeView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = CustomUserSerializer
 
     def get(self, request):
-        serializer = CustomUserSerializer(request.user)
+        serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
 
