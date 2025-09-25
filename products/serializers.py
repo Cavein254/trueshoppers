@@ -13,6 +13,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = ["id", "product", "image", "alt_text", "is_main", "thumbnail_url"]
 
+    @extend_schema_field(serializers.CharField(allow_null=True))
     def get_thumbnail_url(self, obj):
         if obj.thumbnail:
             return obj.thumbnail.url
