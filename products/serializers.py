@@ -1,6 +1,8 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from .models import Category, Product, ProductImage
+from .serializers import CategorySerializer, ProductSerializer
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -26,9 +28,11 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "slug", "parent", "children", "products"]
         read_only_fields = ["slug"]
 
+    @extend_schema_field(CategorySerializer(many=True))
     def get_children(self, obj):
         return CategorySerializer(obj.children.all(), many=True).data
 
+    @extend_schema_field(ProductSerializer(many=True))
     def get_products(self, obj):
         products = Product.objects.filter(category=obj)
         return ProductSerializer(products, many=True).data

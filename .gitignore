@@ -29,3 +29,4 @@ staticfiles/
 .env*
 uploads/
 CACHE/
+tmp_test_media/
