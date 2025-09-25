@@ -32,7 +32,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    public_id = CharIDField(
+    public_id = CharIDField(  # type: ignore[call-arg]
         primary_key=False,  # 👈 keep your default PK separate
         prefix="usr_",
         max_length=30,
