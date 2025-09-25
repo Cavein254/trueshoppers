@@ -36,6 +36,7 @@ class Product(models.Model):
         Shop,
         related_name="products",
         on_delete=models.CASCADE,
+        null=True,  # allow null for now
     )
     category = models.ManyToManyField(Category, related_name="products", blank=True)
     name = models.CharField(max_length=255)

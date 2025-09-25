@@ -10,7 +10,7 @@ pre_commit
 
 djangorestframework-simplejwt
 
-
+django-extensions
 #Testing
 pytest
 pytest-django

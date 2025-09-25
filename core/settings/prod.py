@@ -20,7 +20,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://yourdomain.com",
 ]
 
-INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products"]  # noqa: F405
+INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products", "shop"]  # noqa: F405
 
 # DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 
