@@ -10,6 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, ".env.prod"))
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
@@ -20,6 +21,8 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products"]  # noqa: F405
+
+# DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 
 DATABASES = {
     "default": {
