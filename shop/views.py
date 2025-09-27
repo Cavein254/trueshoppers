@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from rest_framework import status, viewsets  # permissions
 from rest_framework.response import Response
 
@@ -19,8 +20,13 @@ class ListAllShopsViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     def list(self, request):
-        queryset = Shop.objects.all()
-        serializer = ShopSerializer(queryset, many=True)
+        cache_key = "all_shops"
+        data = cache.get(cache_key)
+        if not data:
+            queryset = Shop.objects.all()
+            serializer = ShopSerializer(queryset, many=True)
+            cache.set(cache_key, data, timeout=60 * 5)  # cache for 5 minutes
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None):
