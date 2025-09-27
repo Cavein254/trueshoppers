@@ -11,8 +11,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, ".env.prod"))
 DATABASE_URL = os.environ.get("DATABASE_URL")
-
-DEBUG = False
+SECRET_KEY = env(
+    "SECRET_KEY", default="fuf3!ogt)wh#*c@#j9rr#d168#2dj*e@e4hd5%(3ik(!6ywb*b"
+)
+DEBUG = env("DEBUG", default=False)
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.122.200",
@@ -20,7 +22,12 @@ CSRF_TRUSTED_ORIGINS = [
     "https://yourdomain.com",
 ]
 
-INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products", "shop"]  # noqa: F405
+INSTALLED_APPS = INSTALLED_APPS + [  # noqa: F405
+    "authentication",
+    "products",
+    "shop",
+    "django_extensions",
+]
 
 # DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 
@@ -54,7 +61,11 @@ SIMPLE_JWT = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://redis:6379/1",  # service name = redis
+        "LOCATION": env("REDIS_CACHE_URL", default="redis://redis:6379/1"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SSL": True,
+        },
     }
 }
 

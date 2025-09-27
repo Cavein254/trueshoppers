@@ -9,9 +9,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, ".env"))
 
-SECRET_KEY = "django-insecure-)_@g-pqhg&^95arw(^a7&9=t+3x=!#x(d2o8duyfpj*(qu!yj1"
-
-
 # Application definition
 
 INSTALLED_APPS = [

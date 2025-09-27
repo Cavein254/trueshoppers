@@ -16,7 +16,7 @@ whitenoise
 
 # Database
 psycopg2-binary>=2.9  # For PostgreSQL
-
+django-redis
 # API Docs
 drf-spectacular>=0.28  # Swagger/OpenAPI alternative
 drf-spectacular[sidecar]

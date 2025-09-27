@@ -14,6 +14,9 @@ env.read_env(os.path.join(BASE_DIR, ".env.dev"))
 
 DEBUG = True
 
+SECRET_KEY = "django-insecure-)_@g-pqhg&^95arw(^a7&9=t+3x=!#x(d2o8duyfpj*(qu!yj1"
+
+
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = INSTALLED_APPS + [  # noqa: F405
