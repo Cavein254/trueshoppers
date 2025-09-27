@@ -21,7 +21,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop("password")
         email = validated_data.pop("email")
-        user = CustomUser.objects.create_user(
+        user = CustomUser.objects.create_user(  # type: ignore[attr-defined]
             email=email, password=password, **validated_data
         )
         return user
@@ -31,11 +31,11 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
-    def validate(self, data):
-        user = authenticate(email=data["email"], password=data["password"])
+    def validate(self, attrs):
+        user = authenticate(email=attrs["email"], password=attrs["password"])
         if not user:
             raise serializers.ValidationError("Invalid email or password")
         # if not user.is_active:
         #     raise serializers.ValidationError("User account is disabled")
-        data["user"] = user
-        return data
+        attrs["user"] = user
+        return attrs

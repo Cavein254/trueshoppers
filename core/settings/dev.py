@@ -16,7 +16,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products"]  # noqa: F405
+INSTALLED_APPS = INSTALLED_APPS + [  # noqa: F405
+    "authentication",
+    "products",
+    "shop",
+    "django_extensions",
+]
 
 DATABASES = {
     "default": {

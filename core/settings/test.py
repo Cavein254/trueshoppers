@@ -15,7 +15,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products"]  # noqa: F405
+INSTALLED_APPS = INSTALLED_APPS + ["authentication", "products", "shop"]  # noqa: F405
 
 # Store uploaded files in a temporary directory during tests
 MEDIA_ROOT = os.path.join(BASE_DIR, "tmp_test_media")

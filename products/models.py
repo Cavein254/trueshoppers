@@ -9,6 +9,8 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from PIL import Image
 
+from shop.models import Shop
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -30,9 +32,21 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["shop", "slug"], name="unique_shop_slug"),
+            models.UniqueConstraint(fields=["shop", "sku"], name="unique_shop_sku"),
+        ]
+
+    shop = models.ForeignKey(
+        Shop,
+        related_name="products",
+        on_delete=models.CASCADE,
+        null=True,  # allow null for now
+    )
     category = models.ManyToManyField(Category, related_name="products", blank=True)
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=255, blank=True, null=True)
     sku = models.CharField(max_length=100, unique=True, blank=True, null=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(
@@ -45,7 +59,7 @@ class Product(models.Model):
             base_slug = slugify(self.name)
             slug = base_slug
             counter = 1
-            while Product.objects.filter(slug=slug).exists():
+            while Product.objects.filter(slug=slug, shop=self.shop).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
@@ -57,7 +71,7 @@ class Product(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} -  {self.sku}"
+        return f"{self.name} -  {self.shop.name}"
 
 
 class ProductImage(models.Model):
