@@ -32,6 +32,12 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["shop", "slug"], name="unique_shop_slug"),
+            models.UniqueConstraint(fields=["shop", "sku"], name="unique_shop_sku"),
+        ]
+
     shop = models.ForeignKey(
         Shop,
         related_name="products",
@@ -40,7 +46,7 @@ class Product(models.Model):
     )
     category = models.ManyToManyField(Category, related_name="products", blank=True)
     name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=255, blank=True, null=True)
     sku = models.CharField(max_length=100, unique=True, blank=True, null=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(

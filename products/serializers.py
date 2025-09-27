@@ -46,11 +46,15 @@ class ProductSerializer(serializers.ModelSerializer):
     category_ids = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Category.objects.all(), write_only=True, source="category"
     )
+    shop_id = serializers.IntegerField(write_only=True)
+    shop = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Product
         fields = [
             "id",
+            "shop",
+            "shop_id",
             "name",
             "slug",
             "sku",

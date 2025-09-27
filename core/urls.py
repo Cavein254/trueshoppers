@@ -15,7 +15,8 @@ urlpatterns = [
         include(
             [
                 path("auth/", include("users.urls")),
-                path("shop/", include("products.urls")),
+                path("", include("products.urls")),
+                path("", include("shop.urls")),
                 # Schema generation
                 path("docs/schema/", SpectacularAPIView.as_view(), name="schema"),
                 # Swagger UI
