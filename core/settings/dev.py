@@ -44,6 +44,17 @@ REST_FRAMEWORK = {
     ),
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://192.168.122.200",
+    "http://192.168.122.200:30080",
+    "https://yourdomain.com",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # Vite default
+]
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
