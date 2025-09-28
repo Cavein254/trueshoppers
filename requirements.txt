@@ -13,6 +13,7 @@ Pillow>=10.0  # For image handling
 django-charid-field # For short unique IDs
 cuid # For collision-resistant IDs
 whitenoise
+django-extensions
 
 # Database
 psycopg2-binary>=2.9  # For PostgreSQL
