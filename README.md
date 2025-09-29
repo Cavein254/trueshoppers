@@ -49,7 +49,7 @@ This project integrates modern tooling for **authentication, API documentation, 
 - Public ID with `usr_` prefix
 - Supports staff/superuser flags
 
----
+## ![models](./img/trueshoppers.png)
 
 ## ⚙️ Tech Stack
 
