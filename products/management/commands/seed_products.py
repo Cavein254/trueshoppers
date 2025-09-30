@@ -9,65 +9,77 @@ from faker import Faker
 from products.models import Category, Product, ProductImage
 from shop.models import Shop
 
+fake = Faker()
+
 
 class Command(BaseCommand):
-    help = "Seed the database with fake products and categories"
+    help = "Seed the database with products and random images"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--total",
+            "--count",
             type=int,
             default=20,
-            help="Number of products to create",
+            help="Number of products to create per shop",
         )
 
-    def handle(self, *args, **kwargs):
-        fake = Faker()
-        total = kwargs["total"]
+    def handle(self, *args, **options):
+        count = options["count"]
 
-        shops = list(Shop.objects.all())
-        if not shops:
-            self.stdout.write(
-                self.style.ERROR("No shops found. Please seed shops first.")
-            )
+        shops = Shop.objects.all()
+        if not shops.exists():
+            self.stdout.write(self.style.ERROR("⚠️ No shops found. Create shops first."))
             return
 
-        # Create some categories if none exist
-        if Category.objects.count() == 0:
-            for _ in range(5):
-                Category.objects.create(name=fake.word().capitalize())
-            self.stdout.write(self.style.SUCCESS("Created some sample categories."))
-
         categories = list(Category.objects.all())
+        if not categories:
+            # create fallback categories
+            categories = [
+                Category.objects.create(name="Electronics"),
+                Category.objects.create(name="Clothing"),
+                Category.objects.create(name="Books"),
+                Category.objects.create(name="Furniture"),
+                Category.objects.create(name="Footwear"),
+                Category.objects.create(name="Textile"),
+                Category.objects.create(name="Fast Food"),
+            ]
 
-        for _ in range(total):
-            shop = random.choice(shops)
-            category = random.sample(categories, k=random.randint(1, 2))
-
-            product = Product.objects.create(
-                shop=shop,
-                name=fake.catch_phrase(),
-                description=fake.paragraph(nb_sentences=3),
-                price=round(random.uniform(5.0, 500.0), 2),
-                stock_quantity=random.randint(0, 100),
+        for shop in shops:
+            self.stdout.write(
+                self.style.NOTICE(f"📦 Seeding {count} products for shop: {shop.name}")
             )
-            product.category.set(category)
 
-            # Add 1–5 product images
-            for i in range(random.randint(1, 5)):
-                try:
-                    response = requests.get("https://picsum.photos/600", timeout=10)
-                    if response.status_code == 200:
-                        img_name = f"{uuid.uuid4()}.jpg"
+            for _ in range(count):
+                product = Product.objects.create(
+                    shop=shop,
+                    name=fake.sentence(nb_words=3),
+                    description=fake.paragraph(nb_sentences=3),
+                    price=round(random.uniform(10, 500), 2),
+                    stock_quantity=random.randint(1, 100),
+                )
+
+                # attach random categories
+                product.category.set(random.sample(categories, k=random.randint(1, 2)))
+
+                # Generate 2–5 random images
+                num_images = random.randint(2, 5)
+                for i in range(num_images):
+                    image_url = (
+                        f"https://picsum.photos/600/600?random={uuid.uuid4().hex}"
+                    )
+                    resp = requests.get(image_url)
+                    if resp.status_code == 200:
+                        image_name = f"product_{product.id}_{i}.webp"
+                        image_file = ContentFile(resp.content, name=image_name)
                         ProductImage.objects.create(
                             product=product,
-                            alt_text=fake.word(),
-                            is_main=(i == 0),
-                            image=ContentFile(response.content, img_name),
+                            image=image_file,
+                            alt_text=fake.sentence(nb_words=4),
+                            is_main=(i == 0),  # first image is main
                         )
-                except Exception as e:
-                    self.stdout.write(self.style.WARNING(f"Image fetch failed: {e}"))
 
-            self.stdout.write(self.style.SUCCESS(f"Created product: {product.name}"))
+                self.stdout.write(
+                    self.style.SUCCESS(f"✅ Created product: {product.name}")
+                )
 
-        self.stdout.write(self.style.SUCCESS(f"Successfully created {total} products!"))
+        self.stdout.write(self.style.SUCCESS("🎉 Done seeding products!"))

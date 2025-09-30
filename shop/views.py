@@ -25,7 +25,7 @@ class ListAllShopsViewSet(viewsets.ReadOnlyModelViewSet):
         if not data:
             queryset = Shop.objects.all()
             serializer = ShopSerializer(queryset, many=True)
-            cache.set(cache_key, data, timeout=60 * 5)  # cache for 5 minutes
+            cache.set(cache_key, serializer.data, timeout=60 * 5)  # cache for 5 minutes
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -38,3 +38,8 @@ class ListAllShopsViewSet(viewsets.ReadOnlyModelViewSet):
             )
         serializer = ShopDetailSerializer(shop)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ShopDetailsViewSet(viewsets.ModelViewSet):
+    queryset = Shop.objects.all()
+    serializer_class = ShopDetailSerializer
