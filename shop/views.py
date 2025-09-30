@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from rest_framework import status, viewsets  # permissions
+from rest_framework import permissions, status, viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
@@ -45,3 +45,18 @@ class ListAllShopsViewSet(viewsets.ReadOnlyModelViewSet):
 class ShopDetailsViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopDetailSerializer
+
+
+class MyShopsViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet to allow a user to view and manage their own shops.
+    """
+
+    serializer_class = ShopSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Shop.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
