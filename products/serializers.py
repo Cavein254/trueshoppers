@@ -1,6 +1,8 @@
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from shop.models import Shop
+
 from .models import Category, Product, ProductImage
 
 
@@ -46,16 +48,22 @@ class ProductSerializer(serializers.ModelSerializer):
     category_ids = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Category.objects.all(), write_only=True, source="category"
     )
-    shop_id = serializers.IntegerField(write_only=True)
+    shop_id = serializers.PrimaryKeyRelatedField(
+        queryset=Shop.objects.all(), source="shop"
+    )
     shop = serializers.StringRelatedField(read_only=True)
+    shop_slug = serializers.SlugRelatedField(
+        read_only=True, slug_field="slug", source="shop"
+    )
 
     class Meta:
         model = Product
         fields = [
             "id",
-            "shop",
             "shop_id",
+            "shop_slug",
             "name",
+            "shop",
             "slug",
             "sku",
             "price",

@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from rest_framework import status, viewsets  # permissions
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import Shop
@@ -9,6 +10,7 @@ from .serializers import ShopDetailSerializer, ShopSerializer
 class ShopViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
+    parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
