@@ -16,6 +16,11 @@ SECRET_KEY = env(
 )
 DEBUG = env("DEBUG", default=False)
 ALLOWED_HOSTS = ["*"]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://trueshoppers-frontend.onrender.com",
+]
+
 CSRF_TRUSTED_ORIGINS = [
     "http://192.168.122.200",
     "http://192.168.122.200:30080",
