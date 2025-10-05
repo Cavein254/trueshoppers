@@ -20,6 +20,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.122.200",
     "http://192.168.122.200:30080",
     "https://yourdomain.com",
+    "https://trueshoppers-frontend.onrender.com",
 ]
 
 INSTALLED_APPS = INSTALLED_APPS + [  # noqa: F405
