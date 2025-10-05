@@ -50,3 +50,9 @@ class ShopCreateSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             validated_data["owner"] = request.user
         return super().create(validated_data)
+
+
+class ShopMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shop
+        fields = ["id", "name", "slug", "logo", "cover_image"]

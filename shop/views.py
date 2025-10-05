@@ -1,5 +1,6 @@
 from django.core.cache import cache
-from rest_framework import status, viewsets  # permissions
+from rest_framework import permissions, status, viewsets
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.response import Response
 
 from .models import Shop
@@ -9,6 +10,7 @@ from .serializers import ShopDetailSerializer, ShopSerializer
 class ShopViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
+    parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -25,7 +27,7 @@ class ListAllShopsViewSet(viewsets.ReadOnlyModelViewSet):
         if not data:
             queryset = Shop.objects.all()
             serializer = ShopSerializer(queryset, many=True)
-            cache.set(cache_key, data, timeout=60 * 5)  # cache for 5 minutes
+            cache.set(cache_key, serializer.data, timeout=60 * 5)  # cache for 5 minutes
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -38,3 +40,23 @@ class ListAllShopsViewSet(viewsets.ReadOnlyModelViewSet):
             )
         serializer = ShopDetailSerializer(shop)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ShopDetailsViewSet(viewsets.ModelViewSet):
+    queryset = Shop.objects.all()
+    serializer_class = ShopDetailSerializer
+
+
+class MyShopsViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet to allow a user to view and manage their own shops.
+    """
+
+    serializer_class = ShopSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Shop.objects.filter(owner=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
