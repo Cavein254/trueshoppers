@@ -1,3 +1,5 @@
+from django_tenants.utils import schema_context
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -51,13 +53,29 @@ class UserLoginView(generics.GenericAPIView):
         )
 
 
+@extend_schema(
+    description="Create a new tenant",
+    request=ClientSerializer,
+    responses={201: ClientSerializer},
+    examples=[
+        OpenApiExample(
+            "Tenants Creation Example",
+            summary="Example of creating a shop",
+            value={
+                "name": "My Shop",
+                "domain_url": "myshop.localhost",
+                "paid_until": "2025-12-31",
+                "on_trial": True,
+            },
+        )
+    ],
+)
 class ClientCreateView(generics.CreateAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
     def perform_create(self, serializer):
         # temporarily switch to public schema
-        from django_tenants.utils import schema_context
 
         with schema_context("public"):
             serializer.save()
