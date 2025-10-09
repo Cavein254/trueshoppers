@@ -1,7 +1,9 @@
 from django.contrib.auth import authenticate
+from django.db import IntegrityError, transaction
+from django.utils.text import slugify
 from rest_framework import serializers
 
-from .models import CustomUser
+from .models import Client, CustomUser, Domain
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -39,3 +41,37 @@ class UserLoginSerializer(serializers.Serializer):
         #     raise serializers.ValidationError("User account is disabled")
         attrs["user"] = user
         return attrs
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    domain_url = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Client
+        fields = ["name", "paid_until", "on_trial", "domain_url"]
+
+    @transaction.atomic
+    def create(self, validated_data):
+        domain_url = validated_data.pop("domain_url").strip().lower()
+
+        schema_name = slugify(validated_data["name"]).replace("-", "_")
+
+        if not schema_name.isidentifier():
+            raise serializers.ValidationError(
+                {"schema_name": "Invalid schema name. Use letters, digits"}
+            )
+
+        if Client.objects.filter(schema_name=schema_name).exists():
+            raise serializers.ValidationError(
+                {"domain_url": "A domain with a similar name already exists"}
+            )
+        try:
+            client = Client.objects.create(schema_name=domain_url, **validated_data)
+
+            Domain.objects.create(domain=domain_url, tenant=client, is_primary=True)
+        except IntegrityError as e:
+            raise serializers.ValidationError(
+                {"schema_name": f"Database constraint violated: {str(e)}"}
+            )
+
+        return client

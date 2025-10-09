@@ -3,8 +3,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import CustomUser
+from .models import Client, CustomUser
 from .serializers import (
+    ClientSerializer,
     CustomUserSerializer,
     UserLoginSerializer,
     UserRegistrationSerializer,
@@ -48,3 +49,15 @@ class UserLoginView(generics.GenericAPIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class ClientCreateView(generics.CreateAPIView):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+
+    def perform_create(self, serializer):
+        # temporarily switch to public schema
+        from django_tenants.utils import schema_context
+
+        with schema_context("public"):
+            serializer.save()
