@@ -19,16 +19,18 @@ SECRET_KEY = "django-insecure-)_@g-pqhg&^95arw(^a7&9=t+3x=!#x(d2o8duyfpj*(qu!yj1
 
 ALLOWED_HOSTS = ["*"]
 
-INSTALLED_APPS = INSTALLED_APPS + [  # noqa: F405
+TENANT_APPS = [  # noqa: F405
     "authentication",
     "products",
     "shop",
     "django_extensions",
 ]
 
+INSTALLED_APPS = SHARED_APPS + TENANT_APPS  # noqa: F405
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django_tenants.postgresql_backend",
         "NAME": env("DB_NAME", default="dev_db"),
         "USER": env("DB_USER", default="devuser"),
         "PASSWORD": env("DB_PASSWORD", default="devpass"),
@@ -74,3 +76,9 @@ CACHES = {
 
 CELERY_BROKER_URL = "amqp://user:pass@rabbitmq:5672//"
 CELERY_RESULT_BACKEND = "rpc://"
+
+
+TENANT_MODEL = "users.Client"  # app.Model
+TENANT_DOMAIN_MODEL = "users.Domain"
+
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
